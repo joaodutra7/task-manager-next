@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CalendarIcon, CheckCircle, Clock, ListTodo, Loader2, PlusCircle, XCircle } from "lucide-react"
 import { DashboardChart } from "@/components/dashboard-chart"
 import { useEffect, useState } from "react"
-import { useAuth } from "../../lib/firebaseAuth"
+import { useAuth } from "@/hooks/useAuth"; 
 import { useRouter } from "next/navigation"
 
 

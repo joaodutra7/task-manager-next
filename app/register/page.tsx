@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ClipboardCheck } from "lucide-react"
+import { auth } from "../../lib/firebaseConfig";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 export default function RegisterPage() {
   const [name, setName] = useState("")
@@ -21,14 +23,8 @@ export default function RegisterPage() {
     setIsLoading(true)
     
     try {
-      // This would be where you implement Firebase auth
-      // await createUserWithEmailAndPassword(auth, email, password)
-      // await updateProfile(auth.currentUser, { displayName: name })
-      
-      // For now, we'll just redirect to dashboard
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 1000)
+      await createUserWithEmailAndPassword(auth, email, password)
+      router.push('/login')
     } catch (error) {
       console.error("Registration error:", error)
     } finally {

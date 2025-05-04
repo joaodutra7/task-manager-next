@@ -35,9 +35,6 @@ export function Header() {
               </DialogDescription>
             </DialogHeader>
             <TaskForm />
-            <DialogFooter className="mt-4">
-              <Button type="submit" form="task-form">Criar Tarefa</Button>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
         
