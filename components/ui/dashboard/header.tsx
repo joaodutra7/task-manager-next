@@ -15,12 +15,21 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { TaskForm } from "@/components/task-form"
+import { useState } from "react"
 
 export function Header() {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Função para fechar o modal, será passada para o TaskForm
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-6">
       <div className="flex flex-1 items-center justify-end gap-3">
-        <Dialog>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="h-8 gap-1">
               <Plus className="h-4 w-4" />
@@ -34,7 +43,7 @@ export function Header() {
                 Adicionar uma nova tarefa à sua lista.
               </DialogDescription>
             </DialogHeader>
-            <TaskForm />
+            <TaskForm onSuccess={handleCloseModal}/>
           </DialogContent>
         </Dialog>
         
