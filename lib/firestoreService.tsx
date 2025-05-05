@@ -15,8 +15,6 @@ import { db } from "../lib/firebaseConfig";
     serverTimestamp,
     updateDoc
   } from "firebase/firestore";
-
-  import { User } from "firebase/auth";
   
   // Atividade (subtarefa)
   interface Activity {
@@ -123,3 +121,24 @@ import { db } from "../lib/firebaseConfig";
       throw new Error("Falha ao criar a tarefa.");
     }
   };
+
+  // --- FUNÇÃO PARA ATUALIZAR AS ATIVIDADES DE UMA TAREFA ---
+export const updateTaskActivities = async (
+  taskId: string,
+  updatedActivities: Activity[] // Passamos o array de atividades inteiro atualizado
+): Promise<void> => {
+  if (!taskId) {
+    throw new Error("Task ID is required to update activities.");
+  }
+  try {
+    const taskDocRef = doc(db, "tasks", taskId);
+    // Atualiza apenas o campo 'activities' no documento
+    await updateDoc(taskDocRef, {
+      activities: updatedActivities,
+    });
+    console.log("Atividades da tarefa atualizadas com sucesso:", taskId);
+  } catch (error) {
+    console.error("Erro ao atualizar atividades da tarefa:", error);
+    throw new Error("Falha ao atualizar as atividades da tarefa.");
+  }
+};

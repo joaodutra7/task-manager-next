@@ -16,14 +16,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { TaskForm } from "@/components/task-form"
 import { useState } from "react"
+import { auth } from "@/lib/firebaseConfig"
+import { signOut } from "firebase/auth"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export function Header() {
+
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Função para fechar o modal, será passada para o TaskForm
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  // --- FUNÇÃO DE LOGOUT ---
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Chama a função de logout do Firebase
+      toast.success("Logout realizado com sucesso!");
+      router.push('/');
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      toast.error("Erro ao tentar sair. Tente novamente.");
+    }
   };
   
   return (
@@ -60,7 +78,7 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Sair</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,8 +13,8 @@ import { useRouter } from "next/navigation"
 import { Timestamp } from "firebase/firestore";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { listenToUserTasks, deleteTask, Task } from "../../lib/firestoreService";
-import { toast } from "sonner";
+import { listenToUserTasks, deleteTask, Task, updateTaskActivities} from "../../lib/firestoreService";
+import { toast } from '@/hooks/use-toast'; 
 
 // Helper para calcular progresso
 const calculateProgress = (activities: Task['activities']): number => {
@@ -29,7 +30,7 @@ const formatFirestoreTimestamp = (timestamp: Timestamp | null | undefined): stri
   if (!timestamp) return 'Data inválida';
   try {
     const date = timestamp.toDate();
-    // Formato exemplo: 15 de mai, 2024 (ajuste como preferir)
+    // Formato exemplo: 15 de mai, 2024
     return format(date, "dd 'de' MMM, yyyy", { locale: ptBR });
   } catch (e) {
     console.error("Erro ao formatar data:", e)
@@ -39,7 +40,7 @@ const formatFirestoreTimestamp = (timestamp: Timestamp | null | undefined): stri
 
 export default function DashboardPage() {
 
-  const { user, loading: authLoading } = useAuth(); // Renomeado para evitar conflito
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   // Estados
@@ -85,10 +86,19 @@ export default function DashboardPage() {
 
     try {
       await deleteTask(taskId);
-      toast.success("Tarefa excluída com sucesso!");
+
+      toast({
+        title: "Sucesso!", // Título opcional
+        description: "Tarefa excluída com sucesso!",
+        variant: 'default',
+      });
     } catch (err) {
-      console.error("Erro ao deletar tarefa:", err);
-      toast.error("Erro ao excluir tarefa.");
+      // Depois (shadcn/ui toast):
+      toast({
+        title: "Erro ao excluir tarefa", // Título opcional
+        description: "Erro ao excluir a tarefa. Tente novamente.",
+        variant: 'destructive', 
+      });
     }
   };
 
@@ -102,6 +112,46 @@ export default function DashboardPage() {
   if (authLoading) {
     return <div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin" /> Carregando...</div>;
   }
+
+  const handleToggleActivity = async (taskId: string, activityIndex: number) => {
+    const taskIndex = tasks.findIndex((t) => t.id === taskId);
+    if (taskIndex === -1) {
+      console.error("Tarefa não encontrada no estado local:", taskId);
+      return;
+    }
+
+    const originalTask = tasks[taskIndex];
+    const updatedTask = JSON.parse(JSON.stringify(originalTask)) as Task;
+
+    if (activityIndex < 0 || activityIndex >= updatedTask.activities.length) {
+        console.error("Índice de atividade inválido:", activityIndex);
+        return;
+    }
+
+    updatedTask.activities[activityIndex].completed = !updatedTask.activities[activityIndex].completed;
+    const newTasks = [...tasks];
+    newTasks[taskIndex] = updatedTask;
+    setTasks(newTasks);
+
+    try {
+      await updateTaskActivities(taskId, updatedTask.activities);
+      toast({
+        title: "Status atualizado!", // Título opcional
+        description: "Status atualizado com sucesso!",
+        variant: 'default',
+      });
+    } catch (error) {
+      toast({
+        title: "Erro", // Título opcional
+        description: "Erro ao atualizar status. Tente novamente.",
+        variant: "destructive", // <<< Importante para o estilo de erro
+      });
+      const revertedTasks = [...tasks];
+      revertedTasks[taskIndex] = originalTask;
+      setTasks(revertedTasks);
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -218,6 +268,39 @@ export default function DashboardPage() {
                            >
                              <Trash2 className="h-4 w-4" />
                            </Button>
+
+                           {/* Seção de Atividades (Renderiza se existirem) */}
+                          {task.activities && task.activities.length > 0 && (
+                            <div className="mt-1 pl-7 space-y-1.5"> {/* Leve indentação (pl-7 alinha com início do título) */}
+                              <h4 className="text-xs font-semibold text-muted-foreground mb-1">Atividades:</h4>
+                              {task.activities.map((activity, index) => (
+                                <div key={index} className="flex items-center gap-2 group"> {/* Adiciona 'group' para hover */}
+                                  <Checkbox
+                                    id={`activity-${task.id}-${index}`}
+                                    checked={activity.completed}
+                                    onCheckedChange={() => handleToggleActivity(task.id, index)}
+                                    aria-label={`Marcar atividade ${activity.text} como ${activity.completed ? 'não concluída' : 'concluída'}`}
+                                  />
+                                  <label
+                                    htmlFor={`activity-${task.id}-${index}`}
+                                    className={`text-sm cursor-pointer ${
+                                      activity.completed
+                                        ? "line-through text-muted-foreground"
+                                        : "text-foreground"
+                                    } group-hover:text-primary transition-colors`} // Efeito hover na label
+                                  >
+                                    {activity.text}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                           {/* Caso não hajam atividades */}
+                           {(!task.activities || task.activities.length === 0) && (
+                               <div className="mt-1 pl-7">
+                                   <p className="text-xs text-muted-foreground italic">Nenhuma atividade adicionada.</p>
+                               </div>
+                           )}
                         </div>
                       );
                     })

@@ -86,7 +86,7 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Criando essa P0$$#..." : "Registrar-se"}
+              {isLoading ? "Criando sua conta..." : "Registrar-se"}
             </Button>
             <div className="text-center text-sm">
               Já tem uma conta?{" "}
