@@ -41,29 +41,33 @@ export default function DashboardPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // --- Efeito para buscar tarefas (sem alterações) ---
- // useEffect(() => {
-    // if (!authLoading && user) {
-    //   setTasksLoading(true);
-    //   setError(null);
-    //   const unsubscribe = listenToUserTasks(
-    //     user.uid,
-    //     (fetchedTasks) => {
-    //       setTasks(fetchedTasks);
-    //       setTasksLoading(false);
-    //     },
-    //     (err) => {
-    //       console.error("Falha ao buscar tarefas:", err);
-    //       setError("Não foi possível carregar as tarefas.");
-    //       setTasksLoading(false);
-    //     });
-    //   return () => unsubscribe();
-    // } else if (!authLoading && !user) {
-    //   setTasks([]);
-    //   setTasksLoading(false);
-    //   router.push("/");
-    // }
- // }, [user, authLoading, router]);
 
+  /*
+  useEffect(() => {
+    if (!authLoading && user) {
+      setTasksLoading(true);
+      setError(null);
+      const unsubscribe = listenToUserTasks(
+        user.uid,
+        (fetchedTasks) => {
+          setTasks(fetchedTasks);
+          setTasksLoading(false);
+        },
+        (err) => {
+          console.error("Falha ao buscar tarefas:", err);
+          setError("Não foi possível carregar as tarefas.");
+          setTasksLoading(false);
+        });
+      return () => unsubscribe();
+    } else if (!authLoading && !user) {
+      setTasks([]);
+      setTasksLoading(false);
+      router.push("/");
+    }
+  }, [user, authLoading, router]);
+
+  */
+ 
   // --- Handlers ---
 
   // Handler para Deletar Tarefa
