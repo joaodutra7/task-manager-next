@@ -42,26 +42,26 @@ export default function DashboardPage() {
 
   // --- Efeito para buscar tarefas (sem alterações) ---
   useEffect(() => {
-    if (!authLoading && user) {
-      setTasksLoading(true);
-      setError(null);
-      const unsubscribe = listenToUserTasks(
-        user.uid,
-        (fetchedTasks) => {
-          setTasks(fetchedTasks);
-          setTasksLoading(false);
-        },
-        (err) => {
-          console.error("Falha ao buscar tarefas:", err);
-          setError("Não foi possível carregar as tarefas.");
-          setTasksLoading(false);
-        });
-      return () => unsubscribe();
-    } else if (!authLoading && !user) {
-      setTasks([]);
-      setTasksLoading(false);
-      router.push("/");
-    }
+    // if (!authLoading && user) {
+    //   setTasksLoading(true);
+    //   setError(null);
+    //   const unsubscribe = listenToUserTasks(
+    //     user.uid,
+    //     (fetchedTasks) => {
+    //       setTasks(fetchedTasks);
+    //       setTasksLoading(false);
+    //     },
+    //     (err) => {
+    //       console.error("Falha ao buscar tarefas:", err);
+    //       setError("Não foi possível carregar as tarefas.");
+    //       setTasksLoading(false);
+    //     });
+    //   return () => unsubscribe();
+    // } else if (!authLoading && !user) {
+    //   setTasks([]);
+    //   setTasksLoading(false);
+    //   router.push("/");
+    // }
   }, [user, authLoading, router]);
 
   // --- Handlers ---
