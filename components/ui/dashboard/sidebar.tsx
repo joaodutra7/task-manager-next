@@ -65,7 +65,7 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="flex h-14 shrink-0 items-center justify-between px-4 border-b"> {/* shrink-0 */}
          <Link href="/dashboard" className="flex items-center gap-2 flex-shrink-0 mr-2"> {/* flex-shrink-0 mr-2 */}
           <ClipboardCheck className="h-6 w-6" />
-          {!collapsed && <span className="text-lg font-bold whitespace-nowrap overflow-hidden text-ellipsis">GerenciaTask</span>} {/* Ajuste de texto */}
+          {!collapsed && <span className="text-lg font-bold whitespace-nowrap overflow-hidden text-ellipsis">Gerencia Essa P0$$#</span>}
         </Link>
         {/* Botão de Colapsar/Expandir */}
         <Button
@@ -80,7 +80,7 @@ export function Sidebar({ className }: SidebarProps) {
         </Button>
       </div>
 
-      {/* Navegação Principal (ocupa espaço restante) */}
+      {/* Navegação Principal */}
       <div className="flex-1 overflow-auto py-4">
         <nav className="grid gap-1 px-2">
           {mainNavItems.map((item, index) => (
@@ -101,12 +101,12 @@ export function Sidebar({ className }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Navegação Secundária (na parte inferior) */}
+      {/* Navegação Secundária */}
       <div className="border-t py-4 shrink-0"> {/* shrink-0 */}
         <nav className="grid gap-1 px-2">
           {/* Renderiza o Botão de Logout */}
           <Button
-            variant="ghost" // Usa ghost para ter fundo transparente, hover é definido no className
+            variant="ghost"
             className={cn(
               "flex w-full items-center gap-3 justify-start rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground", // Estilo base similar aos links inativos
               collapsed && "justify-center px-2"

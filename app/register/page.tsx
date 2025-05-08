@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ClipboardCheck } from "lucide-react"
 import { auth } from "../../lib/firebaseConfig";
+import { toast } from '@/hooks/use-toast';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 export default function RegisterPage() {
@@ -24,9 +25,21 @@ export default function RegisterPage() {
     
     try {
       await createUserWithEmailAndPassword(auth, email, password)
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      toast({
+        title: "Conta criada com sucesso!",
+        description: "Agora você pode fazer login.",
+        variant: "default",
+      });
       router.push('/login')
     } catch (error) {
-      console.error("Registration error:", error)
+       toast({
+        title: "Erro ao criar conta",
+        description: "Verifique suas credenciais e tente novamente." + error,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false)
     }

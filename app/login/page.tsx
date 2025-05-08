@@ -10,12 +10,9 @@ import { Label } from "@/components/ui/label"
 import { ClipboardCheck } from "lucide-react"
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../../lib/firebaseConfig";
+import { toast } from '@/hooks/use-toast';
 
-interface LoginProps {
-  onClose: () => void;
-}
-
-export default function LoginPage({ onClose }: LoginProps) {
+export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("");
@@ -33,14 +30,21 @@ export default function LoginPage({ onClose }: LoginProps) {
 
       if (!user.emailVerified) {
         await sendEmailVerification(user);
-        setError("Verifique seu email para confirmar o cadastro.");
+        toast({
+          title: "Verificação Necessária",
+          description: "Enviamos um link de verificação para o seu e-mail. Por favor, confirme seu cadastro.",
+          variant: "default",
+          duration: 7000,
+        });
       } else {
+        toast({
+          title: "Login Bem-Sucedido!",
+          description: "Redirecionando para o dashboard...",
+        });
+        await new Promise(resolve => setTimeout(resolve, 2000));
         router.push("/dashboard");
-        onClose();
       }
     } catch (error: unknown) {
-      console.error("Login error:", error);
-
       // Verifica se o erro é do tipo esperado
       if (typeof error === "object" && error !== null && "code" in error) {
         const errorCode = (error as { code: string }).code;
@@ -63,6 +67,13 @@ export default function LoginPage({ onClose }: LoginProps) {
       } else {
         setError("Erro desconhecido. Tente novamente mais tarde.");
       }
+
+      toast({
+        title: "Erro ao fazer login",
+        description: error as string,
+        variant: "destructive",
+      });
+      
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +130,6 @@ export default function LoginPage({ onClose }: LoginProps) {
               className="text-primary hover:underline"
               onClick={() => {
                 router.push("/register");
-                onClose();
               }}>
                 Registrar-se
               </Link>
