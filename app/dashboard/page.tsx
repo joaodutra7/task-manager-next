@@ -41,7 +41,7 @@ export default function DashboardPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // --- Efeito para buscar tarefas (sem alterações) ---
-  useEffect(() => {
+ // useEffect(() => {
     // if (!authLoading && user) {
     //   setTasksLoading(true);
     //   setError(null);
@@ -62,7 +62,7 @@ export default function DashboardPage() {
     //   setTasksLoading(false);
     //   router.push("/");
     // }
-  }, [user, authLoading, router]);
+ // }, [user, authLoading, router]);
 
   // --- Handlers ---
 
