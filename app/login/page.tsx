@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ClipboardCheck } from "lucide-react"
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { auth } from "../../lib/firebaseConfig";
+import { auth } from "@/lib/firebaseConfig";
 import { toast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
@@ -73,7 +73,7 @@ export default function LoginPage() {
         description: error as string,
         variant: "destructive",
       });
-      
+
     } finally {
       setIsLoading(false);
     }

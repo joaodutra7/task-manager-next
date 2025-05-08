@@ -13,7 +13,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation"
 
-import { listenToUserTasks, deleteTask, Task, updateTaskActivities} from "../../lib/firestoreService";
+import { listenToUserTasks, deleteTask, Task, updateTaskActivities} from "@/lib/firestoreService";
 import { toast } from '@/hooks/use-toast';
 
 const calculateProgress = (activities: Task['activities']): number => {

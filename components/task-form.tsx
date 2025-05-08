@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
-import { createTask, updateTask, Task } from "../lib/firestoreService";
+import { createTask, updateTask, Task } from "@/lib/firestoreService";
 
 // Definir tipo para uma atividade (pode ser importado do service se já definido lá)
 interface Activity {
