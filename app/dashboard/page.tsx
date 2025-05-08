@@ -4,7 +4,6 @@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { TaskForm } from "@/components/task-form";
@@ -12,7 +11,7 @@ import { ListTodo, Loader2, Pencil, PlusCircle, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation"
-
+import { SimpleProgress } from '@/components/ui/simple-progress';
 import { listenToUserTasks, deleteTask, Task, updateTaskActivities} from "@/lib/firestoreService";
 import { toast } from '@/hooks/use-toast';
 
@@ -179,10 +178,12 @@ export default function DashboardPage() {
                           </div>
 
                            <div className="w-full sm:w-auto flex flex-col sm:items-end gap-2 sm:gap-3 flex-shrink-0">
-                              <div className="flex w-full sm:w-32 md:w-40 items-center gap-2">
-                                <Progress value={progress} className="flex-1" aria-label={`Progresso ${progress}%`} />
+
+                           <div className="flex w-full sm:w-32 md:w-40 items-center gap-2">
+                                <SimpleProgress value={progress} className="flex-1" aria-label={`Progresso ${progress}%`} />
                                 <span className="text-sm font-semibold w-10 text-right">{progress}%</span>
                               </div>
+
                               <div className="flex gap-2 self-end sm:self-auto">
                                 <Button
                                   variant="outline" size="icon"
