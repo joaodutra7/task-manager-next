@@ -1,4 +1,4 @@
-// app/dashboard/page.tsx (ou onde quer que este arquivo esteja)
+// app/dashboard/page.tsx
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -6,39 +6,25 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"; // Importar Dialog
-import { TaskForm } from "@/components/task-form"; // Importar TaskForm
-import { CalendarIcon, CheckCircle, ListTodo, Loader2, Pencil, PlusCircle, Trash2 } from "lucide-react" // Adicionar Pencil, PlusCircle
-import { DashboardChart } from "@/components/dashboard-chart" // Assumindo que existe
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { TaskForm } from "@/components/task-form";
+import { ListTodo, Loader2, Pencil, PlusCircle, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation"
-import { Timestamp } from "firebase/firestore";
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+
 import { listenToUserTasks, deleteTask, Task, updateTaskActivities} from "../../lib/firestoreService";
 import { toast } from '@/hooks/use-toast';
 
-// --- Helpers (calculateProgress, formatFirestoreTimestamp) - Sem alterações ---
+// --- Helpers (calculateProgress, formatFirestoreTimestamp)
 const calculateProgress = (activities: Task['activities']): number => {
   if (!activities || activities.length === 0) {
-    // Considerar 100% se não há atividades, ou 0 se preferir
     return 100;
   }
   const completedCount = activities.filter(a => a.completed).length;
   return Math.round((completedCount / activities.length) * 100);
 };
 
-const formatFirestoreTimestamp = (timestamp: Timestamp | null | undefined): string => {
-    if (!timestamp) return 'Data inválida';
-    try {
-        const date = timestamp.toDate();
-        return format(date, "dd MMM yyyy", { locale: ptBR }); // Formato mais curto
-    } catch (e) {
-        console.error("Erro ao formatar data:", e)
-        return 'Erro na data';
-    }
-}
 // --- Fim Helpers ---
 
 
@@ -51,8 +37,8 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false); // Renomeado para clareza
-  const [editingTask, setEditingTask] = useState<Task | null>(null); // Estado para tarefa em edição
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // --- Efeito para buscar tarefas (sem alterações) ---
   useEffect(() => {
@@ -74,15 +60,14 @@ export default function DashboardPage() {
     } else if (!authLoading && !user) {
       setTasks([]);
       setTasksLoading(false);
-      router.push("/"); // Redireciona se não logado
+      router.push("/");
     }
   }, [user, authLoading, router]);
 
   // --- Handlers ---
 
-  // Handler para Deletar Tarefa (toast já atualizado)
+  // Handler para Deletar Tarefa
   const handleDeleteTask = async (taskId: string) => {
-    if (!window.confirm("Tem certeza que deseja excluir esta tarefa?")) return;
     try {
       await deleteTask(taskId);
       toast({ title: "Sucesso!", description: "Tarefa excluída com sucesso!" });
@@ -106,13 +91,12 @@ export default function DashboardPage() {
 
     try {
       await updateTaskActivities(taskId, updatedTask.activities);
-      // Opcional: toast de sucesso aqui, mas pode ser verboso
-      // toast({ description: "Status da atividade atualizado." });
+      toast({ description: "Status da atividade atualizado." });
     } catch (error) {
       toast({ title: "Erro", description: "Erro ao salvar alteração da atividade.", variant: "destructive" });
       const revertedTasks = [...tasks];
       revertedTasks[taskIndex] = originalTask;
-      setTasks(revertedTasks); // Revert optimistic update
+      setTasks(revertedTasks);
     }
   };
 
@@ -128,22 +112,21 @@ export default function DashboardPage() {
     setIsFormModalOpen(true); // Abre o modal
   };
 
-  // Handler para FECHAR o modal (usado pelo TaskForm via onSuccess)
+  // Handler para FECHAR o modal
    const handleCloseFormModal = () => {
     setIsFormModalOpen(false);
     setEditingTask(null); // Limpa a tarefa em edição ao fechar
    };
 
-  // --- Calcular Resumos (sem alterações) ---
+  // --- Calcular Resumos ---
   const totalTasks = tasks.length;
 
   // --- Renderização Condicional Auth Loading ---
   if (authLoading) {
     return <div className="flex justify-center items-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /> Carregando...</div>;
   }
-   // Renderização se não estiver logado (após loading)
+   // Renderização se não estiver logado
    if (!user) {
-    // O useEffect já faz o redirect, mas podemos mostrar uma msg rápida
     return <div className="flex justify-center items-center min-h-screen text-muted-foreground">Redirecionando...</div>;
    }
   // --- Fim Renderização Condicional ---
@@ -161,7 +144,7 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {/* Cards de Resumo (sem alterações significativas) */}
+      {/* Cards de Resumo */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -172,26 +155,12 @@ export default function DashboardPage() {
             <div className="text-2xl font-bold">{tasksLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : totalTasks}</div>
           </CardContent>
         </Card>
-        {/* Mockados */}
-        {[
-          { title: "Em Progresso", value: "...", icon: <Loader2 className="h-5 w-5 text-blue-500 animate-pulse" /> },
-          { title: "Finalizadas", value: "...", icon: <CheckCircle className="h-5 w-5 text-green-500 animate-pulse" /> },
-        ].map((card, i) => (
-          <Card key={i}>
-             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-              {card.icon}
-            </CardHeader>
-            <CardContent><div className="text-2xl font-bold">{card.value}</div></CardContent>
-          </Card>
-        ))}
       </div>
 
       {/* Tabs de Tarefas e Progresso */}
       <Tabs defaultValue="tasks">
         <TabsList className="mb-4"> {/* Adiciona margem inferior */}
           <TabsTrigger value="tasks">Tarefas</TabsTrigger>
-          <TabsTrigger value="progress">Progresso</TabsTrigger>
         </TabsList>
 
         {/* Conteúdo da Tab Tarefas - Layout Ajustado */}
@@ -212,7 +181,6 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   {tasks.map((task) => {
                     const progress = calculateProgress(task.activities);
-                    const formattedDate = formatFirestoreTimestamp(task.createdAt);
 
                     return (
                       // Container de cada Tarefa
@@ -238,10 +206,6 @@ export default function DashboardPage() {
                              </div>
                              <h3 className="font-semibold text-base sm:text-lg truncate" title={task.title}>{task.title}</h3>
                             {task.description && <p className="text-sm text-muted-foreground truncate mt-0.5" title={task.description}>{task.description}</p>}
-                            <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mt-1">
-                              <CalendarIcon className="h-3 w-3" />
-                              <span>{formattedDate}</span>
-                            </div>
                           </div>
 
                            {/* Seção Direita: Progresso e Botões de Ação */}
@@ -304,25 +268,10 @@ export default function DashboardPage() {
           </Card>
         </TabsContent>
 
-        {/* Conteúdo da Tab Progresso (sem alterações) */}
-        <TabsContent value="progress">
-           {/* ... conteúdo da tab progresso ... */}
-           <Card>
-                <CardHeader>
-                  <CardTitle>Progresso Geral</CardTitle>
-                  <CardDescription>Sua taxa de conclusão de tarefas.</CardDescription>
-                </CardHeader>
-                <CardContent className="pl-2">
-                   {/* Idealmente, passar dados reais para o gráfico */}
-                  <DashboardChart />
-                </CardContent>
-              </Card>
-        </TabsContent>
       </Tabs>
 
 
       {/* --- Modal de Criação/Edição de Tarefa --- */}
-      {/* Colocado fora do fluxo principal para melhor organização */}
       <Dialog open={isFormModalOpen} onOpenChange={setIsFormModalOpen}>
             <DialogContent className="sm:max-w-[500px]"> {/* Ajustar largura se necessário */}
               <DialogHeader>
@@ -340,6 +289,6 @@ export default function DashboardPage() {
             </DialogContent>
         </Dialog>
 
-    </div> // Fim do container principal da página
+    </div>
   );
 }
