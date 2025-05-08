@@ -24,8 +24,6 @@ const calculateProgress = (activities: Task['activities']): number => {
   return Math.round((completedCount / activities.length) * 100);
 };
 
-
-
 export default function DashboardPage() {
 
   const { user, loading: authLoading } = useAuth();
@@ -35,6 +33,30 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      setTasksLoading(true);
+      setError(null);
+      const unsubscribe = listenToUserTasks(
+        user.uid,
+        (fetchedTasks) => {
+          setTasks(fetchedTasks);
+          setTasksLoading(false);
+        },
+        (err) => {
+          console.error("Falha ao buscar tarefas:", err);
+          setError("Não foi possível carregar as tarefas.");
+          setTasksLoading(false);
+        });
+      return () => unsubscribe();
+    } else if (!authLoading && !user) {
+      setTasks([]);
+      setTasksLoading(false);
+      router.push("/");
+    }
+  }, [user, authLoading, router]);
+
 
   const handleDeleteTask = async (taskId: string) => {
     try {
